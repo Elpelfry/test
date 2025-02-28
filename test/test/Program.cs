@@ -8,6 +8,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddScoped(a =>
+    new HttpClient
+    {
+        BaseAddress = new Uri((builder.Configuration.GetSection("RutaApi")!.Value)!)
+    });
 
 var app = builder.Build();
 
@@ -25,6 +30,12 @@ else
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
+app.MapControllers();
+
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+        .AllowAnyMethod()
+            .AllowAnyHeader());
 
 app.UseStaticFiles();
 app.UseAntiforgery();
